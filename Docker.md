@@ -8,9 +8,9 @@ entre as diversas aplicações utilizadas.
 ## Download
 
 - Windows:
-    - https://youtu.be/dQw4w9WgXcQ
+    - Siga as instruções especificadas na [documentação oficial](https://docs.docker.com/desktop/setup/install/windows-install/)
 - Linux:
-    - https://youtu.be/dQw4w9WgXcQ
+    - Siga as instruções especificadas na [documentação oficial](https://docs.docker.com/desktop/setup/install/linux/)
     - Para adicionar seu usuário ao grupo de permitidos ao docker: `$ sudo usermod -aG docker $USER`
 
 ## Referências
