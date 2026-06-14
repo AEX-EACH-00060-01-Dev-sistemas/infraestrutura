@@ -1,6 +1,8 @@
 # Infraestrutura
 
-Este repositório foi produzido como parte da atividade extensionista AEX-EACH-00060-01-Dev-sistemas promovida pela Universidade de São Paulo [USP] e é dedicado a ensinar ao leitor sobre as principais ferramentas de automação de build utilizadas no desenvolvimento de software.
+Este repositório foi produzido como parte da atividade extensionista AEX-EACH-00060-01-Dev-sistemas promovida pela Universidade de São Paulo [USP]
+e é dedicado a ensinar ao leitor sobre as principais ferramentas e serviços disponíveis para criação de uma infraestrutura utilizada
+no desenvolvimento de software.
 
 ## Objetivo
 
