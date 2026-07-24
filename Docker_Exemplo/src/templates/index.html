@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Flask Todo</title>
+    <style>
+        .completed { text-decoration: line-through; color: #888; }
+        .btn-del { color: red; }
+    </style>
+</head>
+<body>
+
+    <h2>Lista</h2>
+
+    <form action="{{ url_for('add_todo') }}" method="POST">
+        <input type="text" name="title" placeholder="Tarefa" required>
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <div>
+        {% for todo in todos %}
+            <div>
+                <span class="{% if todo.completed %}completed{% endif %}">
+                    {{ todo.title }}
+                </span>
+                <div>
+                    <a href="{{ url_for('toggle_todo', todo_id=todo.id) }}">
+                        {% if todo.completed %}↩️ Voltar{% else %}✅ Finaliza{% endif %}
+                    </a>
+                    <a href="{{ url_for('delete_todo', todo_id=todo.id) }}" class="btn-del">❌ Deleta</a>
+                </div>
+            </div>
+        {% else %}
+            <p>Sem tarefas!</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

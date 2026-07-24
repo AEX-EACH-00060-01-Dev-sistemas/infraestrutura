@@ -1,0 +1,36 @@
+services: # Ponto de entrada do composer
+  database: # Define um serviço com nome database
+    image: mariadb:11.2 # Especifica o nome da imagem pra ser baixada e a versão
+    container_name: todo_mariadb # Espefica o nome do container
+    restart: always
+    environment: # Define variáveis de ambiente
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: todo_db
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_password
+    ports: # Mapeia uma porta do seu computador para uma porta virtual do docker
+      - "3306:3306"
+    volumes: # Define onde os dados do banco vão ser guardados no sistema de arquivos interno do container
+      - mariadb_data:/var/lib/mysql
+
+  web_app: # Define um serviço com nome web_app
+    image: python:latest
+    container_name: todo_flask
+    restart: always
+    ports:
+      - "5000:5000"
+    environment: # Variáveis de ambiente: aqui vão mapear o db usado pelo python para o db criado por nós
+      - DB_HOST=database
+      - DB_USER=todo_user
+      - DB_PASSWORD=todo_password
+      - DB_NAME=todo_db
+    volumes:
+      - ../src:/app:z
+    working_dir: /app
+    # Comando para instalar os requisitos e rodar o app tudo de uma vez
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python app.py"
+    depends_on:
+      - database
+
+volumes:
+  mariadb_data:
