@@ -10,7 +10,7 @@ possibilita o upload de ambietes containerizados virtuais, como o Docker.
 Assim, veremos aqui como colocar um container Docker no ar utilizando a ferramenta EC2
 disponível no site da AWS.
 
-# Criando o container
+## Criando o container
 
 Para esse projeto, vamos precisar de uma imagem Docker para subir para o EC2, aqui usaremos
 a imagem utilizada na [trilha de Docker](./Docker.md), mas você pode baixar/buildar uma
@@ -29,7 +29,7 @@ mariadb:11.2       ff87d49107a1        554MB          127MB
 python:latest      09b29c360b84       1.63GB          432MB
 ```
 
-# Criando um repositório para a imagem
+## Criando um repositório para a imagem
 
 Agora, é necessário uma conta no [site do docker](https://app.docker.com/signup).
 Ao entrar no hub, dirija-se para a [criação de um novo repositório](https://hub.docker.com/repository/create?)
@@ -96,7 +96,7 @@ $ docker compose push # Para enviar as mudanças feitas localmente
 Isso é especialmente útil para imagens construídas por você mesmo, menos útil
 para imagens estáticas baixadas, como o caso da imagem do python.
 
-# AWS
+## AWS
 
 Crie uma conta na [AWS](https://signin.aws.amazon.com/signup?request_type=register),
 navegue para o serviço EC2 e lance uma nova instância, o que executará uma máquina virtual.
