@@ -1,5 +1,6 @@
 services: # Ponto de entrada do composer
   database: # Define um serviço com nome database
+    build: .
     image: mariadb:11.2 # Especifica o nome da imagem pra ser baixada e a versão
     container_name: todo_mariadb # Espefica o nome do container
     restart: always
@@ -14,7 +15,8 @@ services: # Ponto de entrada do composer
       - mariadb_data:/var/lib/mysql
 
   web_app: # Define um serviço com nome web_app
-    image: python:latest
+    build: .
+    image: username/repo_py:latest # Aqui baixa a imagem a partir de um repositório remoto
     container_name: todo_flask
     restart: always
     ports:
