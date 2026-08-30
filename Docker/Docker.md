@@ -2,7 +2,7 @@
 
 Docker é uma ferramenta de containerização que utiliza imagens para automatizar o processo de implantação de aplicações.
 
-A ferramenta é baseada no kernel do linux e no uso de namegroups para segregação de processos para manter independência, autonomia e segurança
+A ferramenta é baseada no kernel do linux e no uso de cgroups para segregação de processos para manter independência, autonomia e segurança
 entre as diversas aplicações utilizadas.
 
 ## Download

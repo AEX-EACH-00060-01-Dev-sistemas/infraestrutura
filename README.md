@@ -12,7 +12,7 @@ projeto com os conhecimentos obtidos [nessa atividade extensionista](https://git
 
 ## Conteúdos Disponíveis
 
-Apresentaremos aqui trilhas de [Docker](./Docker.md) e [AWS](./AWS.md), para termos um ambiente livre de limitações de um Sistema Operacional
+Apresentaremos aqui trilhas de [Docker](./Docker/Docker.md) e [AWS](./AWS.md), para termos um ambiente livre de limitações de um Sistema Operacional
 escolhido arbitrariamente.
 
 ## Rota Sugerida
