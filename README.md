@@ -12,7 +12,7 @@ projeto com os conhecimentos obtidos [nessa atividade extensionista](https://git
 
 ## Conteúdos Disponíveis
 
-Apresentaremos aqui trilhas de [Linux](./Linux/Linux.md), [Docker](./Docker/Docker.md) e [AWS](./Cloud\ Computing/Fundamentos.md), para termos um ambiente livre de limitações de um Sistema Operacional
+Apresentaremos aqui trilhas de [Linux](./Linux/Linux.md), [Docker](./Docker/Docker.md) e [AWS](./Cloud%20Computing/Fundamentos.md), para termos um ambiente livre de limitações de um Sistema Operacional
 escolhido arbitrariamente.
 
 ## Rota Sugerida
