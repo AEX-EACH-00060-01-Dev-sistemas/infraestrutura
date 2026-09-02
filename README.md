@@ -12,10 +12,10 @@ projeto com os conhecimentos obtidos [nessa atividade extensionista](https://git
 
 ## Conteúdos Disponíveis
 
-Apresentaremos aqui trilhas de [Docker](./Docker/Docker.md) e [AWS](./AWS.md), para termos um ambiente livre de limitações de um Sistema Operacional
+Apresentaremos aqui trilhas de [Linux](./Linux/Linux.md), [Docker](./Docker/Docker.md) e [AWS](./Cloud Computing/Fundamentos.md), para termos um ambiente livre de limitações de um Sistema Operacional
 escolhido arbitrariamente.
 
 ## Rota Sugerida
 
-É sugerido primeiro aprender a construir contâiners com docker para então subir eles para a nuvem via AWS, de tal modo que a configuração da sua
+É sugerido primeiro aprender sobre Linux, para então aprender a construir contâiners com docker para então subir eles para a nuvem via AWS, de tal modo que a configuração da sua
 infraestrutura seja feita segundo a stack escolhida para seu projeto.
