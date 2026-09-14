@@ -1,109 +1,102 @@
 # Módulo 5: Amazon S3 para objetos e backups
 
-Neste módulo, usaremos o Amazon Simple Storage Service (S3) para armazenar artefatos do laboratório. O S3 será tratado como armazenamento de objetos, não como um disco para instalar o PostgreSQL ou executar a aplicação.
+Neste módulo, nós usaremos o Amazon Simple Storage Service (S3) para armazenarmos artefatos do nosso laboratório. Nós trataremos o S3 como um armazenamento de objetos para arquivos, e não como um disco tradicional para instalar o PostgreSQL ou rodar a aplicação.
 
-Não será necessário modificar o código do projeto. O acesso ao bucket será configurado por IAM roles, políticas e comandos da AWS CLI executados no ambiente autorizado.
+Para introduzirmos o uso do S3 de forma rápida e automatizada, a nossa atividade principal será o envio do arquivo de configuração do projeto diretamente pelo terminal, simulando uma esteira de automação.
 
-Escolha uma atividade principal:
+Para preservarmos a segurança, nós manteremos o bucket totalmente privado e acessaremos os objetos via painel ou URLs pré-assinadas.
 
-- publicar um arquivo estático de demonstração;
-- armazenar logs exportados;
-- enviar um backup lógico do PostgreSQL do RDS.
+## 1. Criação de um bucket privado
 
-Para preservar a segurança, mantenha o bucket privado e acesse os objetos com IAM e URLs pré-assinadas quando necessário.
-
-## 1. Criar um bucket privado
-
-Crie o bucket na mesma região do restante do laboratório, usando um nome globalmente único, por exemplo:
+No console da AWS, acesse **S3 > Create bucket**. Escolha a mesma região do restante do laboratório e use um nome globalmente único, por exemplo:
 
 ```text
 forms-lab-ID_DA_CONTA
 ```
 
-Configure:
+Configure as opções abaixo.
 
-- Block Public Access habilitado;
-- ACLs desabilitadas;
-- criptografia SSE-S3 ou SSE-KMS;
-- versionamento conforme o objetivo da aula;
-- tags como `Projeto=forms-simulator` e `Ambiente=lab`.
+* acesso público: block all public access habilitado;
+* controle de acesso: acls desabilitadas;
+* criptografia: sse-s3 ou sse-kms;
+* versionamento: conforme o objetivo da aula;
+* tags: adicionar projeto=forms-simulator e ambiente=lab.
 
-Não crie uma política pública para o bucket apenas para facilitar o primeiro teste.
+Clique em **Create bucket**. Nós não criaremos uma política pública apenas para facilitar o primeiro teste, pois a segurança vem em primeiro lugar.
 
-## 2. Permissões por IAM role
+## 2. Criação de permissões
 
-Se a atividade for executada em uma EC2, associe uma IAM role à instância. Se for executada no ECS, use a task role da aplicação.
+Acesse **IAM > Policies > Create policy** e crie uma política restrita ao nosso bucket e à pasta `backups/`. Se nós executarmos a atividade no ECS, associaremos à task role da aplicação.
 
-A política deverá conceder somente as ações necessárias ao bucket. Para um laboratório de upload, um exemplo restrito seria:
+A política deverá conceder somente as ações necessárias. Para um laboratório de upload, um exemplo restrito seria este formato:
 
 ```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Effect": "Allow",
-      "Action": ["s3:PutObject", "s3:GetObject"],
+      "Effect": "allow",
+      "Action": ["s3:putObject", "s3:getObject"],
       "Resource": "arn:aws:s3:::forms-lab-ID_DA_CONTA/backups/*"
     },
     {
-      "Effect": "Allow",
-      "Action": "s3:ListBucket",
+      "Effect": "allow",
+      "Action": "s3:listBucket",
       "Resource": "arn:aws:s3:::forms-lab-ID_DA_CONTA",
-      "Condition": {"StringLike": {"s3:prefix": ["backups/*"]}}
+      "Condition": {"stringLike": {"s3:prefix": ["backups/*"]}}
     }
   ]
 }
 ```
 
-Evite `AmazonS3FullAccess` quando uma política limitada ao prefixo `backups/` for suficiente.
+Nós evitaremos usar `AmazonS3FullAccess` quando uma política limitada for suficiente.
 
-## 3. Teste pela AWS CLI
+## 3. Upload automatizado pelo terminal
 
-Com a role configurada, confirme a identidade e envie um arquivo de teste:
+Para automatizarmos o processo, nós usaremos a interface de linha de comando da AWS. Nós enviaremos o arquivo `docker-compose.yml` do nosso projeto para a nuvem.
+
+Abra o terminal na pasta do projeto e confirme a sua identidade. Em seguida, faça o envio executando as instruções abaixo.
 
 ```bash
 aws sts get-caller-identity
-printf 'forms-simulator\n' > teste.txt
-aws s3 cp teste.txt s3://forms-lab-ID_DA_CONTA/backups/teste.txt
+aws s3 cp docker-compose.yml s3://forms-lab-ID_DA_CONTA/backups/docker-compose.yml
 aws s3 ls s3://forms-lab-ID_DA_CONTA/backups/
 ```
 
-Para baixar um objeto sem torná-lo público, gere uma URL temporária:
+Para baixarmos o objeto gerando a URL temporária por linha de comando, basta executar o código abaixo.
 
 ```bash
-aws s3 presign s3://forms-lab-ID_DA_CONTA/backups/teste.txt --expires-in 900
+aws s3 presign s3://forms-lab-ID_DA_CONTA/backups/docker-compose.yml --expires-in 900
 ```
 
 ## 4. Backup lógico do PostgreSQL
 
-Execute o `pg_dump` a partir de uma máquina que tenha conectividade com o RDS e credenciais apropriadas. Envie o arquivo gerado ao prefixo privado do bucket:
+Se nós quisermos validar um cenário real de banco, podemos gerar um dump a partir de uma máquina autorizada e enviá-lo pelo terminal de forma totalmente automatizada. Pela CLI, o comando seria este modelo:
 
 ```bash
 pg_dump --host=ENDPOINT_DO_RDS --port=5432 --username=forms_backup --format=custom --file=forms.dump formdb
 aws s3 cp forms.dump s3://forms-lab-ID_DA_CONTA/backups/forms-$(date +%Y-%m-%d).dump
 ```
 
-Não coloque a senha na linha de comando nem no repositório. Obtenha a senha por um mecanismo de segredo apropriado e mantenha o arquivo de backup protegido.
-
-Lembre-se de que um backup no S3 não substitui os backups automáticos e snapshots do RDS. São camadas diferentes de recuperação.
+Nós nunca colocaremos a senha direto na linha de comando. É importante lembrar que o backup no S3 não substitui as rotinas automáticas do RDS.
 
 ## 5. Validação de segurança
 
-Confirme que:
+No console, nós confirmaremos as regras abaixo.
 
-- um acesso anônimo ao objeto é negado;
-- a role consegue executar apenas as operações autorizadas;
-- a criptografia está habilitada;
-- o bucket está na região esperada;
-- o objeto aparece no prefixo correto;
-- a aplicação não contém access key e secret key estáticas.
+* bloqueio: um acesso anônimo ao objeto é negado;
+* restrição: a role consegue executar apenas as operações autorizadas;
+* proteção: a criptografia está habilitada;
+* localidade: o bucket está na região esperada;
+* organização: o objeto aparece na pasta correta;
+* credenciais: a aplicação não contém chaves de acesso estáticas no código.
 
-## 6. Limpeza
+## 6. Limpeza e encerramento
 
-Apague os objetos, versões e delete markers antes de apagar o bucket. Se o versionamento estiver habilitado, o botão de apagar o bucket poderá não remover todas as versões sozinho.
+No S3, nós apagaremos os objetos, as versões e os marcadores de exclusão antes de apagarmos o bucket. Se o versionamento estiver ativado, a AWS não deixará excluir o bucket caso ele contenha versões ocultas.
 
-Depois, remova a política IAM, a role ou a task role criada exclusivamente para a atividade e revise custos de armazenamento, requests e transferência.
+Depois, nós removeremos a política e a role do IAM criadas para este módulo, garantindo que não restem custos na conta.
 
 ## Resultado final da trilha
 
-Ao final, teremos publicado o mesmo projeto em quatro modelos: uma EC2 com Docker Compose, imagens no ECR executadas pelo ECS, uma arquitetura segmentada por VPC e um banco PostgreSQL gerenciado no RDS, complementado por armazenamento privado no S3.
+Parabéns! Ao final deste laboratório, nós teremos publicado o mesmo projeto em quatro modelos distintos, sendo uma máquina virtual EC2 com Docker Compose, contêineres escaláveis no ECS Fargate, uma rede segmentada com VPC e um banco de dados PostgreSQL gerenciado no RDS, tudo isso complementado pelo armazenamento seguro do S3.
